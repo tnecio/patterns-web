@@ -1,0 +1,63 @@
+body {
+    margin: auto;
+    background: #f2f2f2;
+    color: #222;
+    font-family: sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    max-width: 75%;
+}
+
+code {
+    background: white;
+}
+
+a {
+    border-bottom: 1px solid #181144;
+    color: #181144;
+    text-decoration: none;
+}
+
+h1 a {
+    border-bottom: 0;
+    color: inherit;
+}
+
+h3 {
+    margin: 0 auto;
+}
+
+img {
+    width: 100%;
+}
+
+figcaption {
+    color: red;
+    font-size: 0.8em;
+    display: flex;
+    justify-content: space-between;
+}
+
+input[type="number"] {
+    width: 4em;
+}
+
+.layerControl {
+    padding: 0.5em;
+    margin-bottom: 1em;
+    border: blueviolet 2px dashed;
+}
+
+figure {
+    padding: 0.5em;
+    background-color: black;
+    width: min(80%, 500px);
+    height: min-content;
+    max-height: 500px;
+    margin: 1.5em auto;
+}
+
+
+footer {
+    margin-top: 5em;
+}

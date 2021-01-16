@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="js/katex/katex.min.css">
+    <script defer src="js/katex/katex.min.js"></script>
+    <script>
+        const delimiters = [{
+            left: '$$',
+            right: '$$',
+            display: false
+        }, {
+            left: "\\[",
+            right: "\\]",
+            display: true
+        }];
+    </script>
+    <script defer src="js/katex/contrib/auto-render.min.js" onload='renderMathInElement(document.body, { delimiters: delimiters });'></script>
+
+    <link rel="stylesheet" href="style.css">
+    <title>Pattern DEMO WIP</title>
+</head>
+<body>
+
+<main id="lp">
+</main>
+
+<script src="js/vue.js"></script>
+<script src="js/script.js"></script>
+<script src="js/dom_watcher.js"></script>
+</body>
+</html>
