@@ -5,7 +5,17 @@ body {
     font-family: sans-serif;
     font-size: 16px;
     line-height: 1.5;
-    max-width: 75%;
+}
+
+main {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+nav {
+    margin: 1em;
+    max-width: 600px;
 }
 
 code {
@@ -58,11 +68,14 @@ figure {
     background-color: black;
     width: min-content;
     height: min-content;
-    max-height: 1000px;
-    margin: 1.5em auto;
+    margin: 1.5em 1em;
 }
 
 
 footer {
     margin-top: 5em;
+}
+
+.hidden {
+    display: none;
 }

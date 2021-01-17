@@ -123,22 +123,27 @@ Vue.component('layerControl', {
     },
 
     data: function() { return {
-        el: "H"
+        el: "H",
+        atomsHidden: false
     }; },
 
     template: `
 <div class="layerControl">
     <form novalidate class="layerPropertiesControl">
-    <label for="v00">$$v_1^x$$ (Å) <input v-model="l.cell[0].x" name="v00" type="number" step="0.1"></label>
-    <label for="v01">$$v_1^y$$ (Å) <input v-model="l.cell[0].y" name="v01" type="number" step="0.1"></label>
-    <label for="v10">$$v_2^x$$ (Å) <input v-model="l.cell[1].x" name="v10" type="number" step="0.1"></label>
-    <label for="v11">$$v_2^y$$ (Å) <input v-model="l.cell[1].y" name="v11" type="number" step="0.1"></label>
-    
-    <label for="rot">Rotation (°) <input v-model="l.rotation" name="rot" type="number" step="1"></label>
+        {{ l.name }} <br>
+        <label for="v00">$$v_1^x$$ (Å) <input v-model="l.cell[0].x" name="v00" type="number" step="0.1"></label>
+        <label for="v01">$$v_1^y$$ (Å) <input v-model="l.cell[0].y" name="v01" type="number" step="0.1"></label>
+        <label for="v10">$$v_2^x$$ (Å) <input v-model="l.cell[1].x" name="v10" type="number" step="0.1"></label>
+        <label for="v11">$$v_2^y$$ (Å) <input v-model="l.cell[1].y" name="v11" type="number" step="0.1"></label>
+        
+        <label for="rot">Rotation (°) <input v-model="l.rotation" name="rot" type="number" step="1"></label>
     </form>
     
+    <hr>
+    
     <form novalidate>
-        <table class="atomsControl">
+        <label for="atomsHidden">Hide<input type="checkbox" v-model="atomsHidden" name="atomsHidden"></label>
+        <table class="atomsControl" v-bind:class="{ hidden: atomsHidden }">
             <atomControl
                 v-for="(atom, index) in l.atoms"
                 v-bind:key="index" v-bind:index="index" v-bind:data="atom"
@@ -147,7 +152,7 @@ Vue.component('layerControl', {
         </table>
     </form>
     
-    <form v-on:submit.prevent="addAtom()"> <!-- TODO: WHY TWICE?? -->
+    <form v-on:submit.prevent="addAtom()" v-bind:class="{ hidden: atomsHidden }">
         <label for="el">Element (Z/symbol) <input v-model="el" id="el" name="el" type="text"></label>
         <button type="submit" title="Add atom">Add atom</button>
         <button @click="$emit('remove-layer', index)" type="button">Remove layer</button>
@@ -191,20 +196,19 @@ let lp = new Vue({
     },
 
     data: {
-        layers: [
-            {
-                name: "Sample Layer",
-                height: 1,
-                atoms: [
-                    {el: 6, x: 0, y: 0, z: 0}
-                ],
-                cell: [
-                    {x: 1, y: 0},
-                    {x: 0, y: 1}
-                ],
-                rotation: 0
-            }
-        ],
+// {
+//     name: "Sample Layer",
+//         height: 1,
+//     atoms: [
+//     {el: 6, x: 0, y: 0, z: 0}
+// ],
+//     cell: [
+//     {x: 1, y: 0},
+//     {x: 0, y: 1}
+// ],
+//     rotation: 0
+// }
+        layers: [],
 
         settings: {
             showAtoms: true,
@@ -249,14 +253,19 @@ let lp = new Vue({
         <label for="scale">Scale</label>
         {{ settings.scale }}
     
+        <br>
+        
         <layerControl
             v-for="(layer, index) in this.layers"
             v-bind:key="index" v-bind:index="index" v-bind:l="layer"
             @remove-layer="removeLayer"
         ></layerControl>
-        <button @click="addLayer()">Add layer</button>
+        <button @click="addLayer()">Add layer manually</button>
+        
+        <hr>
         
         <div id="poscar">
+            <h4>Load layer from <a href="https://www.vasp.at/wiki/index.php/POSCAR">VASP POSCAR</a> file</h4>
             <span style="color:red;" v-if="this.messages.poscarError">{{ messages.poscarError }} <br></span>
             <label for="poscarArea">Paste POSCAR content here:<textarea name="poscarArea" v-model="inputs.poscar"></textarea></label>
             <br>
