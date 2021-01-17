@@ -52,7 +52,7 @@ Vue.component('atom', {
 Vue.component('layerPattern', {
     props: ['data', 'index', 'settings'],
     template: `
-<pattern :id="'layer' + index" :width="1 / settings.scale" :height="1 / settings.scale" viewBox="0 0 1 1" overflow="visible" :patternTransform="'rotate(' + data.rotation + ' 50 50) matrix(' + getTransformMatrix() + ')'">
+<pattern :id="'layer' + index" :width="1 / settings.scale" :height="1 / settings.scale" viewBox="0 0 1 1" overflow="visible" :patternTransform="'rotate(' + (-data.rotation) + ' 50 50) matrix(' + getTransformMatrix() + ')'">
     <atom
         v-if="settings.showAtoms" 
         v-for="(atom, atomIndex) in data.atoms"
@@ -205,18 +205,6 @@ let lp = new Vue({
     },
 
     data: {
-// {
-//     name: "Sample Layer",
-//         height: 1,
-//     atoms: [
-//     {el: 6, x: 0, y: 0, z: 0}
-// ],
-//     cell: [
-//     {x: 1, y: 0},
-//     {x: 0, y: 1}
-// ],
-//     rotation: 0
-// }
         layers: [{
             name: "Graphene",
             height: 1,
