@@ -67,12 +67,13 @@ function parsePoscar(s, species) {
             }
             species = speciesPrompted.trim().split(/\s+/).map(x => PERIODIC_TABLE.indexOf(x));
         } else {
-            for (let i = 0; i < species.length; i++) {
-                if (PERIODIC_TABLE.indexOf(species[i]) === -1) {
-                    console.log(species);
+            const speciesZ = species.map(x => PERIODIC_TABLE.indexOf(x));
+            for (let i = 0; i < speciesZ.length; i++) {
+                if (speciesZ[i] === -1) {
                     return {error: "No such element symbol " + species[i]};
                 }
             }
+            species = speciesZ;
         }
     }
 

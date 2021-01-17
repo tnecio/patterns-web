@@ -135,6 +135,7 @@ Vue.component('layerControl', {
         <h4 v-if="l.name">
             {{ l.name }}
             <button @click="$emit('remove-layer', index)" type="button">🚫 Remove layer</button>
+            <button @click="$emit('clone-layer', index)" type="button">🌟 Clone layer</button>
         </h4>
         <label for="v00">$$v_1^x$$ (Å) <input v-model="l.cell[0].x" name="v00" type="number" step="0.1"></label>
         <label for="v01">$$v_1^y$$ (Å) <input v-model="l.cell[0].y" name="v01" type="number" step="0.1"></label>
@@ -147,7 +148,7 @@ Vue.component('layerControl', {
     <hr>
     
     <form novalidate>
-        <label for="atomsHidden">Hide<input type="checkbox" v-model="atomsHidden" name="atomsHidden"></label>
+        <a href="javascript:void(0)" @click="toggleAtomsHidden()">{{ atomsHidden ? '▷' : '▽' }} Atoms</a>
         <table class="atomsControl" v-bind:class="{ hidden: atomsHidden }">
             <atomControl
                 v-for="(atom, index) in l.atoms"
@@ -188,6 +189,10 @@ Vue.component('layerControl', {
 
         removeAtom: function (index) {
             this.l.atoms.splice(index, 1);
+        },
+
+        toggleAtomsHidden: function () {
+            this.atomsHidden = !this.atomsHidden;
         }
     }
 })
@@ -264,23 +269,26 @@ let lp = new Vue({
     </figure>
 
     <nav>
-        <label for="showAtoms">Show Atoms<input type="checkbox" v-model="settings.showAtoms" id="showAtoms" name="showAtoms"></label>
-        <label for="showCells">Show Cells<input type="checkbox" v-model="settings.showCells" id="showCells" name="showCells"></label>
-        
-        <input type="range" id="scale" name="scale" min="1" max="50" style="width: 30em;" v-model="settings.scale">
-        <label for="scale">Scale</label> {{ settings.scale }}
-        <input type="range" id="scale" name="dotScale" min="1" max="10" v-model="settings.dotScale">
-        <label for="dotScale">Atom dot's scale</label> {{ settings.dotScale }}
+        <h2>2D materials patterns</h2>
+        <form>
+            <label for="showAtoms">Show Atoms<input type="checkbox" v-model="settings.showAtoms" id="showAtoms" name="showAtoms"></label>
+            <label for="showCells">Show Cells<input type="checkbox" v-model="settings.showCells" id="showCells" name="showCells"></label>
+            
+            <input type="range" id="scale" name="scale" min="1" max="50" style="width: 30em;" v-model="settings.scale">
+            <label for="scale">Scale</label> {{ settings.scale }}
+            <input type="range" id="scale" name="dotScale" min="1" max="20" v-model="settings.dotScale">
+            <label for="dotScale">Atom dot's scale</label> {{ settings.dotScale }}
+        </form>
     
         <br>
         
         <layerControl
             v-for="(layer, index) in this.layers"
             v-bind:key="index" v-bind:index="index" v-bind:l="layer"
-            @remove-layer="removeLayer"
+            @remove-layer="removeLayer" @clone-layer="cloneLayer"
         ></layerControl>
         <input type="text" name="layerName" v-model="inputs.layerName" :placeholder="'Layer name'">
-        <button @click="addLayer()">Add layer manually</button>
+        <button @click="addLayer()">➕ Add layer</button>
         
         <hr>
         
@@ -295,7 +303,7 @@ let lp = new Vue({
                 <input type="text" name="poscarSpecies" v-model="inputs.poscarSpecies">
             </label>
             <br>
-            <button @click="loadPoscar()" :disabled="!inputs.poscar">Load</button>
+            <button @click="loadPoscar()" :disabled="!inputs.poscar">↑ Load</button>
             <br>
             Note: we ignore $$v_1^z, v_2^z, v_3^x,$$ and $$v_3^y$$ in the parsing, and we assume $$v_3^z$$ to be the "height" (layer thickness) of the unit cell.
         </div>
@@ -334,6 +342,12 @@ let lp = new Vue({
 
         removeLayer: function (index) {
             this.layers.splice(index, 1);
+        },
+
+        cloneLayer: function (index) {
+            let newLayer = JSON.parse(JSON.stringify(this.layers[index])); // deep-copy trick
+            newLayer.name = newLayer.name + "'";
+            this.layers.push(newLayer);
         }
     }
 })
