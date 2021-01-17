@@ -142,7 +142,7 @@ Vue.component('layerControl', {
         <label for="v10">$$v_2^x$$ (Å) <input v-model="l.cell[1].x" name="v10" type="number" step="0.1"></label>
         <label for="v11">$$v_2^y$$ (Å) <input v-model="l.cell[1].y" name="v11" type="number" step="0.1"></label>
         
-        <label for="rot">Rotation (°) <input v-model="l.rotation" name="rot" type="number" step="1"></label>
+        <label for="rot">Rotation (°) <input v-model="l.rotation" name="rot" type="number" step="0.2"></label>
     </form>
     
     <hr>
@@ -266,6 +266,9 @@ let lp = new Vue({
                 <layerRect v-for="(layer, index) in this.layers" v-bind:key="index" v-bind:index="index"></layerRect>
             </g>
         </svg>
+        <figcaption>
+            <button @click="downloadSvg()">↓ Download SVG image</button>
+        </figcaption>
     </figure>
 
     <nav>
@@ -312,6 +315,25 @@ let lp = new Vue({
 `,
 
     methods: {
+        downloadSvg: function () {
+            const text = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+                "<svg width=\"800\" height=\"800\" viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\" style=\"background-color: white\">" +
+                document.getElementsByTagName("svg")[0].innerHTML +
+                "</svg>";
+            const filename = "patterns.svg"
+
+            let element = document.createElement('a');
+            element.setAttribute('href', 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(text));
+            element.setAttribute('download', filename);
+
+            element.style.display = 'none';
+            document.body.appendChild(element);
+
+            element.click();
+
+            document.body.removeChild(element);
+        },
+
         addLayer: function () {
             this.layers.push({
                 name: "New Layer",
