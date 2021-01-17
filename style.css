@@ -48,12 +48,17 @@ input[type="number"] {
     border: blueviolet 2px dashed;
 }
 
+svg {
+    width: min(80vw, 90vh);
+    height: min(80vw, 90vh);
+}
+
 figure {
     padding: 0.5em;
     background-color: black;
-    width: min(80%, 500px);
+    width: min-content;
     height: min-content;
-    max-height: 500px;
+    max-height: 1000px;
     margin: 1.5em auto;
 }
 
