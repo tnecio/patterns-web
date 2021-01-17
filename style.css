@@ -15,7 +15,7 @@ main {
 
 nav {
     margin: 1em;
-    max-width: 600px;
+    flex-basis: 45%;
 }
 
 code {
