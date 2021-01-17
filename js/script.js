@@ -11,21 +11,21 @@ for (var i = 1; i < 300; i++) {
 }
 
 Vue.component('atom', {
-    props: ['data', 'index', 'transform', 'retransform'],
+    props: ['data', 'index', 'transform', 'retransform', 'r'],
     // retransform is used to transform back to normal coordinates so that circles are circles
     // transform is used to move positions again to where they should be in the transformed pattern
     template: `
     <g>
-        <circle :cx='getX(transform, data, 0, 0)' :cy='getY(transform, data, 0, 0)' r='0.05' :fill="getColor(data)" :transform="'matrix (' + retransform + ')'"></circle>
+        <circle :cx='getX(transform, data, 0, 0)' :cy='getY(transform, data, 0, 0)' :r='r' :fill="getColor(data)" :transform="'matrix (' + retransform + ')'"></circle>
         <!-- deal with overflow:visible being broken -->
-        <circle :cx='getX(transform, data, 1, 0)' :cy='getY(transform, data, 1, 0)' r='0.05' :fill="getColor(data)" :transform="'matrix (' + retransform + ')'"></circle>
-        <circle :cx='getX(transform, data, -1, 0)' :cy='getY(transform, data, -1, 0)' r='0.05' :fill="getColor(data)" :transform="'matrix (' + retransform + ')'"></circle>
-        <circle :cx='getX(transform, data, 0, 1)' :cy='getY(transform, data, 0, 1)' r='0.05' :fill="getColor(data)" :transform="'matrix (' + retransform + ')'"></circle>
-        <circle :cx='getX(transform, data, 0, -1)' :cy='getY(transform, data, 0, -1)' r='0.05' :fill="getColor(data)" :transform="'matrix (' + retransform + ')'"></circle>
-        <circle :cx='getX(transform, data, 1, 1)' :cy='getY(transform, data, 1, 1)' r='0.05' :fill="getColor(data)" :transform="'matrix (' + retransform + ')'"></circle>
-        <circle :cx='getX(transform, data, 1, -1)' :cy='getY(transform, data, 1, -1)' r='0.05' :fill="getColor(data)" :transform="'matrix (' + retransform + ')'"></circle>
-        <circle :cx='getX(transform, data, -1, 1)' :cy='getY(transform, data, -1, 1)' r='0.05' :fill="getColor(data)" :transform="'matrix (' + retransform + ')'"></circle>
-        <circle :cx='getX(transform, data, -1, -1)' :cy='getY(transform, data, -1, -1)' r='0.05' :fill="getColor(data)" :transform="'matrix (' + retransform + ')'"></circle>
+        <circle :cx='getX(transform, data, 1, 0)' :cy='getY(transform, data, 1, 0)' :r='r' :fill="getColor(data)" :transform="'matrix (' + retransform + ')'"></circle>
+        <circle :cx='getX(transform, data, -1, 0)' :cy='getY(transform, data, -1, 0)' :r='r' :fill="getColor(data)" :transform="'matrix (' + retransform + ')'"></circle>
+        <circle :cx='getX(transform, data, 0, 1)' :cy='getY(transform, data, 0, 1)' :r='r' :fill="getColor(data)" :transform="'matrix (' + retransform + ')'"></circle>
+        <circle :cx='getX(transform, data, 0, -1)' :cy='getY(transform, data, 0, -1)' :r='r' :fill="getColor(data)" :transform="'matrix (' + retransform + ')'"></circle>
+        <circle :cx='getX(transform, data, 1, 1)' :cy='getY(transform, data, 1, 1)' :r='r' :fill="getColor(data)" :transform="'matrix (' + retransform + ')'"></circle>
+        <circle :cx='getX(transform, data, 1, -1)' :cy='getY(transform, data, 1, -1)' :r='r' :fill="getColor(data)" :transform="'matrix (' + retransform + ')'"></circle>
+        <circle :cx='getX(transform, data, -1, 1)' :cy='getY(transform, data, -1, 1)' :r='r' :fill="getColor(data)" :transform="'matrix (' + retransform + ')'"></circle>
+        <circle :cx='getX(transform, data, -1, -1)' :cy='getY(transform, data, -1, -1)' :r='r' :fill="getColor(data)" :transform="'matrix (' + retransform + ')'"></circle>
     </g>
 `,
     methods: {
@@ -59,6 +59,7 @@ Vue.component('layerPattern', {
         v-bind:key="atomIndex" v-bind:index="atomIndex" v-bind:data="atom"
         v-bind:transform="getTransformMatrix()"
         v-bind:retransform="getInverseTransformMatrix()"
+        v-bind:r="settings.dotScale * 0.01"
     ></atom>
     <g v-if="settings.showCells">
         <line x1="0" y1="0" x2="1" y2="0" stroke="gray" stroke-width="0.025"></line>
@@ -101,10 +102,11 @@ Vue.component('atomControl', {
     props: ['data', 'index'],
     created () {
         this.PERIODIC_TABLE = PERIODIC_TABLE;
+        this.colors = colors;
     },
     template: `
 <tr class="atomControl">
-<td>
+<td :style="'color: ' + colors[data.el]">
     {{ PERIODIC_TABLE[data.el] }}
 </td><td>
     <label for="x">$$x$$  <input v-model="data.x" name="x" type="number" min="0" max="1" step="0.01"></label>
@@ -123,14 +125,17 @@ Vue.component('layerControl', {
     },
 
     data: function() { return {
-        el: "H",
+        el: null,
         atomsHidden: false
     }; },
 
     template: `
 <div class="layerControl">
     <form novalidate class="layerPropertiesControl">
-        {{ l.name }} <br>
+        <h4 v-if="l.name">
+            {{ l.name }}
+            <button @click="$emit('remove-layer', index)" type="button">🚫 Remove layer</button>
+        </h4>
         <label for="v00">$$v_1^x$$ (Å) <input v-model="l.cell[0].x" name="v00" type="number" step="0.1"></label>
         <label for="v01">$$v_1^y$$ (Å) <input v-model="l.cell[0].y" name="v01" type="number" step="0.1"></label>
         <label for="v10">$$v_2^x$$ (Å) <input v-model="l.cell[1].x" name="v10" type="number" step="0.1"></label>
@@ -153,10 +158,9 @@ Vue.component('layerControl', {
     </form>
     
     <form v-on:submit.prevent="addAtom()" v-bind:class="{ hidden: atomsHidden }">
-        <label for="el">Element (Z/symbol) <input v-model="el" id="el" name="el" type="text"></label>
-        <button type="submit" title="Add atom">Add atom</button>
-        <button @click="$emit('remove-layer', index)" type="button">Remove layer</button>
-        <span style="color:red;" v-if="!inputIsElement()">No such element</span>
+        <input v-model="el" id="el" name="el" type="text" :placeholder="'Element (Z/symbol)'">
+        <button type="submit" title="Add atom" :disabled="!el">➕ Add atom</button> <!-- TODO: make it show error if el is empty -->
+        <span style="color:red;" v-if="el && !inputIsElement()">No such element</span>
     </form>
     
 </div>    
@@ -208,17 +212,31 @@ let lp = new Vue({
 // ],
 //     rotation: 0
 // }
-        layers: [],
+        layers: [{
+            name: "Graphene",
+            height: 1,
+            atoms: [
+                {el: 6, x: 0, y: 0, z: 0},
+                {el: 6, x: 0.667, y: 0.667, z: 0}
+            ],
+            cell: [
+                {x: 2.13, y: 1.23},
+                {x: 2.13, y: -1.23}
+            ],
+            rotation: 0
+        }],
 
         settings: {
             showAtoms: true,
             showCells: true,
-            scale: 10
+            scale: 10,
+            dotScale: 5
         },
 
         inputs: {
             poscar: "",
-            poscarSpecies: ""
+            poscarSpecies: "",
+            layerName: null
         },
 
         messages: {
@@ -250,8 +268,9 @@ let lp = new Vue({
         <label for="showCells">Show Cells<input type="checkbox" v-model="settings.showCells" id="showCells" name="showCells"></label>
         
         <input type="range" id="scale" name="scale" min="1" max="50" style="width: 30em;" v-model="settings.scale">
-        <label for="scale">Scale</label>
-        {{ settings.scale }}
+        <label for="scale">Scale</label> {{ settings.scale }}
+        <input type="range" id="scale" name="dotScale" min="1" max="10" v-model="settings.dotScale">
+        <label for="dotScale">Atom dot's scale</label> {{ settings.dotScale }}
     
         <br>
         
@@ -260,20 +279,23 @@ let lp = new Vue({
             v-bind:key="index" v-bind:index="index" v-bind:l="layer"
             @remove-layer="removeLayer"
         ></layerControl>
+        <input type="text" name="layerName" v-model="inputs.layerName" :placeholder="'Layer name'">
         <button @click="addLayer()">Add layer manually</button>
         
         <hr>
         
         <div id="poscar">
-            <h4>Load layer from <a href="https://www.vasp.at/wiki/index.php/POSCAR">VASP POSCAR</a> file</h4>
+            <h4>Load layer from a <a href="https://www.vasp.at/wiki/index.php/POSCAR" target="_blank">VASP POSCAR</a></h4>
             <span style="color:red;" v-if="this.messages.poscarError">{{ messages.poscarError }} <br></span>
-            <label for="poscarArea">Paste POSCAR content here:<textarea name="poscarArea" v-model="inputs.poscar"></textarea></label>
+            <label for="poscarArea">Paste POSCAR content here:
+                <textarea name="poscarArea" v-model="inputs.poscar"></textarea>
+            </label>
             <br>
             <label for="poscarSpecies">Atomic elements (if not supplied in the POSCAR, as a SPACE-separated list of symbols):
                 <input type="text" name="poscarSpecies" v-model="inputs.poscarSpecies">
             </label>
             <br>
-            <button @click="loadPoscar()">Load layer from POSCAR</button>
+            <button @click="loadPoscar()" :disabled="!inputs.poscar">Load</button>
             <br>
             Note: we ignore $$v_1^z, v_2^z, v_3^x,$$ and $$v_3^y$$ in the parsing, and we assume $$v_3^z$$ to be the "height" (layer thickness) of the unit cell.
         </div>
@@ -296,11 +318,17 @@ let lp = new Vue({
         },
 
         loadPoscar: function () {
-            let res = parsePoscar(this.inputs.poscar, this.inputs.poscarSpecies.trim().split(/\s+/));
-            if (res.error !== undefined) {
-                this.messages.poscarError = res.error;
-            } else {
-                this.layers.push(res);
+            try {
+                let res = parsePoscar(this.inputs.poscar, this.inputs.poscarSpecies.trim().split(/\s+/));
+                if (res.error !== undefined) {
+                    this.messages.poscarError = res.error;
+                } else {
+                    this.messages.poscarError = "";
+                    this.layers.push(res);
+                }
+            } catch (e) {
+                console.log(e);
+                this.messages.poscarError = "Can't parse POSCAR";
             }
         },
 

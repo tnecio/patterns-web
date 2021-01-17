@@ -33,7 +33,7 @@ h1 a {
     color: inherit;
 }
 
-h3 {
+h3, h4, h5 {
     margin: 0 auto;
 }
 
@@ -55,7 +55,15 @@ input[type="number"] {
 .layerControl {
     padding: 0.5em;
     margin-bottom: 1em;
-    border: blueviolet 2px dashed;
+    border: dimgray 2px dashed;
+}
+
+td {
+    min-width: 2em;
+}
+
+textarea {
+    width: 100%;
 }
 
 svg {
