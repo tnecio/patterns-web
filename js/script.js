@@ -308,7 +308,7 @@ let lp = new Vue({
             <br>
             <button @click="loadPoscar()" :disabled="!inputs.poscar">↑ Load</button>
             <br>
-            Note: we ignore $$v_1^z, v_2^z, v_3^x,$$ and $$v_3^y$$ in the parsing, and we assume $$v_3^z$$ to be the "height" (layer thickness) of the unit cell.
+            Note: we ignore $$v_1^z, v_2^z,$$ and $$v_3$$ in the parsing.
         </div>
     </nav>
 </main>
