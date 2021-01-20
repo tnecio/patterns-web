@@ -16,6 +16,8 @@ main {
 nav {
     margin: 1em;
     flex-basis: 45%;
+    flex-grow: 1;
+    max-width: 90%;
 }
 
 code {
