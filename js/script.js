@@ -262,7 +262,7 @@ let lp = new Vue({
     <nav>
         <header style="display: flex; justify-content: space-between; margin-bottom: 2em;">
             <h2 style="margin: 0 auto;">2D materials patterns</h2>
-            <a href="https://github.com/tnecio/supercell-core">Github</a>
+            <a href="https://github.com/tnecio/patterns-web">Github</a>
         </header>
         <form>
             <label for="showAtoms">Show Atoms<input type="checkbox" v-model="settings.showAtoms" id="showAtoms" name="showAtoms"></label>
